@@ -1,4 +1,7 @@
 // Funciones
+
+import { constants } from "buffer"
+
 /**
  * Función que muestra un saludo por consola.
  */
@@ -81,3 +84,97 @@ let empleadoMartin:Empleado = {
 }
 const mostrarEmpleado = (empleado:Empleado) => ` ${empleado.nombre} ${empleado.apellido} tiene ${empleado.edad} años!!`
 console.log(mostrarEmpleado(empleadoMartin))
+
+const datosEmpleado = (empleado:Empleado):string => {
+if(empleado.edad < 70 ){
+    return `${empleado.nombre} ${empleado.apellido} esta en edad de trabajar `
+}else {
+ return `${empleado.nombre} ${empleado.apellido} no esta en edad de trabajar `
+} 
+}
+console.log(datosEmpleado(empleadoMartin))
+
+const cobrarSalario = () => {
+    console.log('Cobrar nómina de empleado')
+}
+const obtenerSalario = (empleado:Empleado, cobrar: ()=> void) =>{
+    if(empleado.edad < 70 ){
+        return 
+    }else {
+     cobrar()//callback a ejecutar
+    } 
+}
+
+console.log(obtenerSalario(empleadoMartin, ()=>'Cobrar Martin'))
+
+//Async Functions
+async function ejemploAsync():Promise<string>{
+ await  console.log('Tarea a completar antes de ejecutar la secuencia')
+ return 'Completado'
+}
+ejemploAsync()
+
+//Funciones generadoras (generar como iterador)
+function* ejemploGeneretor() {
+    //yield emite un nuevo valor
+    let index = 0
+    while(index < 5){
+        yield index ++
+    }    
+}
+// Guardamos la funcion generadora en una variable
+let generadora = ejemploGeneretor()
+//Acceder a los valores emitidos
+console.log(generadora.next().value)
+console.log(generadora.next().value)
+console.log(generadora.next().value)
+console.log(generadora.next().value)
+console.log(generadora.next().value)
+
+//Worker
+function* watcher(valor:number){
+    //llama al worker
+    yield valor; // emitimos el valor inicial
+    yield* worker(valor)//llamamos a las emisiones del worker
+    yield valor + 10;// emitimos valor final + 10
+}
+function* worker(valor:number) {
+    yield valor + 1
+    yield valor + 2
+    yield valor + 3
+}
+let generatorSaga = watcher(6)
+console.log(generatorSaga.next().value)// watcher
+console.log(generatorSaga.next().value)//worker
+console.log(generatorSaga.next().value)//worker
+console.log(generatorSaga.next().value)//worker
+console.log(generatorSaga.next().value)//watcher
+// clase temporizador
+
+class Temporizador {
+    public terminar? : () => void;
+
+    public empezar(): void {
+        setTimeout(() => {
+            //Comprobar que existe la función terminar
+            if(!this.terminar) return
+            //Cuando paso el tiempo se ejecutara la funcion terminar
+            this.terminar()
+        }, 10000);
+    }
+}
+
+const miTemporizador: Temporizador = new Temporizador();
+//Definir la función del callback a ejecutar cuando terime el tiempo
+
+miTemporizador.terminar = () =>{
+    console.log('Hemos terminado la tarea')
+}
+//Iniciamos el temporizador y se inicia el TimeOut
+miTemporizador.empezar()
+//Eliminar la ejecución de la función
+delete miTemporizador.terminar;
+const ejemplo = () => {
+
+    setInterval(()=> console.log('Tic'), 1000)//Imptime tic c/seg
+}
